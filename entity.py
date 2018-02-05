@@ -1,6 +1,7 @@
 import spacegame
+import numpy as np
 import pygame
-import util
+import space_util
 
 class SpaceEntity(pygame.sprite.Sprite):
     

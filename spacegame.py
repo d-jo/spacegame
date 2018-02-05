@@ -1,5 +1,5 @@
 import pygame
-import util
+from space_util import *
 import entity
 import os, sys
 from pygame.locals import *
@@ -56,16 +56,6 @@ class ShipType(Enum):
     DESTROYER = 2
     FLEET = 3
 
-class Force:
-    
-    # IN RADIANS!!!
-    # REMEMBER THIS!!
-    def __init__(self, xmagnitude, ymagnitude):
-        self.xmagnitude = xmagnitude
-        self.ymagnitude = ymagnitude
-
-    def get_x_y(self):
-        return np.array([self.xmagnitude, self.ymagnitude])
 
 
 class SpaceEntity(pygame.sprite.Sprite):
