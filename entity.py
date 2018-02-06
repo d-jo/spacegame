@@ -1,7 +1,16 @@
+import space_util
+from pygame.locals import *
+import pygame
 import spacegame
+from enum import Enum
 import numpy as np
 import pygame
-import space_util
+
+class ShipType(Enum):
+    CIV = 0
+    CARGO = 1
+    DESTROYER = 2
+    FLEET = 3
 
 class SpaceEntity(pygame.sprite.Sprite):
     
@@ -11,7 +20,7 @@ class SpaceEntity(pygame.sprite.Sprite):
         self.actions = {}
 
 
-    def update(self, inputs=None, num=0):
+    def update(self, events=None, inputs=None, num=0):
         self.surf.fill(self.color)
 
     def move(self):
@@ -27,12 +36,13 @@ class SpaceEntity(pygame.sprite.Sprite):
 
 class RayMissle(SpaceEntity):
 
-    def __init__(self, forces, color=(255,0,0)):
+    def __init__(self, force, start=(0,0), color=(255,0,0)):
         super(RayMissle, self).__init__()
         self.surf = pygame.Surface((1,1))
         self.rect = self.surf.get_rect()
+        self.rect.move(start[0], start[1])
         self.color = color
-        self.forces = forces
+        self.forces = {"base": force}
         self.mass = 1.0
         self.explosive_energy = 1.0
         self.explosive_radius = 1.0
@@ -40,10 +50,7 @@ class RayMissle(SpaceEntity):
         
     def move(self):
         super(RayMissle, self).move()
-        forceStr = ""
-        for force in self.forces:
-            forceStr = forceStr + "XV{0} YV{1}".format(self.forces[force].xmagnitude,self.forces[force].ymagnitude)
-        self.text = ("RayMissle" + forceStr)
+        self.text = ("RayMissle " + self.explosive_energy)
 
 
 class ShipBase(SpaceEntity):
@@ -59,9 +66,9 @@ class ShipBase(SpaceEntity):
         self.actions = actions
 
         self.mass = 9.0
-        self.forces = {"ctrl": Force(0, 1)}
+        self.forces = {"ctrl": space_util.PolarForce(0, 1)}
 
-    def update(self, inputs, num):
+    def update(self, events, inputs, num):
         super(ShipBase, self).update()
         if inputs[K_UP]:
             self.forces["ctrl"].xmagnitude -= 0.1
@@ -72,9 +79,3 @@ class ShipBase(SpaceEntity):
         if inputs[K_LEFT]:
             self.forces["ctrl"].ymagnitude -= 0.1
         
-        if inputs[K_SPACE]:
-            if self.energy >= 1000:
-                event = pygame.event.Event(self.actions["create_entity"], {"entity": RayMissle(self.forces)})
-                pygame.event.post(event)
-                self.energy = 0
-            self.energy += 4
