@@ -19,9 +19,14 @@ class SpaceEntity(pygame.sprite.Sprite):
         self.text = "space"
         self.actions = {}
 
-
     def update(self, events=None, inputs=None, num=0):
         self.surf.fill(self.color)
+
+    def selected(self, click_pos, button):
+        self.rect.inflate_ip(2, 2)
+
+    def unselected(self, click_pos, button):
+        self.rect.inflate_ip(-2,-2)
 
     def move(self):
         xydelta = np.array((1,2), dtype=np.float32)
@@ -66,7 +71,7 @@ class ShipBase(SpaceEntity):
         self.actions = actions
 
         self.mass = 9.0
-        self.forces = {"ctrl": space_util.PolarForce(0, 1)}
+        self.forces = {"ctrl": space_util.Force(0, 0)}
 
     def update(self, events, inputs, num):
         super(ShipBase, self).update()
@@ -78,4 +83,5 @@ class ShipBase(SpaceEntity):
             self.forces["ctrl"].ymagnitude += 0.1
         if inputs[K_LEFT]:
             self.forces["ctrl"].ymagnitude -= 0.1
+
         

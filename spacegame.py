@@ -1,4 +1,4 @@
-import pygame
+import pygame, math
 from space_util import *
 from entity import *
 import os, sys
@@ -20,6 +20,10 @@ class GameInit:
         self.all_sprites = pygame.sprite.Group()
         self.MOVETICK = pygame.USEREVENT + 1
         self.CREATE_ENTITY = pygame.USEREVENT + 2
+
+        self.selection_rect = pygame.Rect(0,1,2,3)
+        self.dragging = False
+
         self.font = pygame.font.SysFont("Hack", 12)
         self.player = pygame.sprite.Group()
         self.all_sprites.add(ShipBase({"create_entity": self.CREATE_ENTITY}))
@@ -30,10 +34,33 @@ class GameInit:
             if event.type == self.MOVETICK:
                 for entity in self.all_sprites:
                     entity.move()
-            if event.type == self.CREATE_ENTITY:
+            elif event.type == self.CREATE_ENTITY:
                 self.all_sprites.add(event.entity)
-            if event.type == pygame.QUIT:
+            elif event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP or event.type == pygame.MOUSEMOTION:
+                self.selection(event)
+            elif event.type == pygame.QUIT:
                 sys.exit()
+
+    def selection(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                self.dragging = True
+                mx, my = event.pos
+                self.selection_rect.x = mx
+                self.selection_rect.y = my
+                self.selection_rect.w = 0
+                self.selection_rect.h = 0
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1:
+                self.dragging = False
+        elif event.type == pygame.MOUSEMOTION:
+            if self.dragging:
+                mx, my = event.pos
+                dx = self.selection_rect.x - mx
+                dy = self.selection_rect.y - my
+                self.selection_rect.w = -dx
+                self.selection_rect.h = -dy
+
 
             
     def tick(self):
@@ -47,6 +74,9 @@ class GameInit:
                 entity.update(events, inputs, num)
                 self.screen.blit(entity.surf, entity.rect)
                 self.screen.blit(self.font.render(entity.text, True, entity.color), (entity.rect[0] + 2, entity.rect[1]))
+
+            if self.dragging:
+                pygame.draw.rect(self.screen, (0,244,0), self.selection_rect)
             pygame.display.flip()
             num = num + 1
 
