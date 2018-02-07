@@ -20,7 +20,7 @@ class GameInit:
         self.all_sprites = pygame.sprite.Group()
         self.MOVETICK = pygame.USEREVENT + 1
         self.CREATE_ENTITY = pygame.USEREVENT + 2
-        self.ENTITY_SELECTED = pygame.USEREVENT + 3
+        self.SELECTION = pygame.USEREVENT + 3
 
         self.selection_rect = pygame.Rect(0,1,2,3)
         self.dragging = False
@@ -54,8 +54,16 @@ class GameInit:
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 self.dragging = False
-                rects = {}
-                i = 0
+                group = pygame.sprite.Group()
+                for sprite in self.all_sprites:
+                    if self.selection_rect.colliderect(sprite.rect):
+                        group.add(sprite)
+                print(group.sprites)
+                
+
+
+
+
                 
                 
         elif event.type == pygame.MOUSEMOTION:
