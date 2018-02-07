@@ -81,7 +81,11 @@ class GameInit:
                 self.screen.blit(self.font.render(entity.text, True, entity.color), (entity.rect[0] + 2, entity.rect[1]))
 
             if self.dragging:
-                pygame.draw.rect(self.screen, (0,244,0), self.selection_rect)
+                su_rect = self.selection_rect.copy()
+                su = pygame.Surface((math.fabs(su_rect.w), math.fabs(su_rect.h)))
+                su.fill((0,222,222))
+                su.set_alpha(100)
+                self.screen.blit(su, su_rect)
             pygame.display.flip()
             num = num + 1
 
