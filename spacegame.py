@@ -56,8 +56,19 @@ class GameInit:
                 self.dragging = False
                 group = pygame.sprite.Group()
                 for sprite in self.all_sprites:
-                    if self.selection_rect.colliderect(sprite.rect):
+                    print(sprite.rect)
+                    print(self.selection_rect)
+                    testrect = self.selection_rect.copy()
+                    if testrect.w < 0:
+                        testrect.x = testrect.x + testrect.w
+                        testrect.w = -testrect.w
+                    if testrect.h < 0:
+                        testrect.y = testrect.y + testrect.h
+                        testrect.h = -testrect.h
+                    if testrect.colliderect(sprite.rect):
                         group.add(sprite)
+                        sprite.selected(event.pos, 1)
+
                 print(group.sprites)
                 
 
@@ -93,7 +104,13 @@ class GameInit:
                 su = pygame.Surface((math.fabs(su_rect.w), math.fabs(su_rect.h)))
                 su.fill((0,222,222))
                 su.set_alpha(100)
-                self.screen.blit(su, su_rect)
+                dx = 0 + (su_rect.x)
+                dy = 0 + (su_rect.y)
+                if su_rect.w < 0:
+                    dx = dx + su_rect.w
+                if su_rect.h < 0:
+                    dy = dy + su_rect.h
+                self.screen.blit(su, (dx,dy))
             pygame.display.flip()
             num = num + 1
 
