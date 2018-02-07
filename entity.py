@@ -1,4 +1,5 @@
 import space_util
+import math
 from pygame.locals import *
 import pygame
 import spacegame
@@ -18,15 +19,18 @@ class SpaceEntity(pygame.sprite.Sprite):
         super(SpaceEntity, self).__init__()
         self.text = "space"
         self.actions = {}
+        self.surf = pygame.Surface((3,3))
 
     def update(self, events=None, inputs=None, num=0):
         self.surf.fill(self.color)
 
     def selected(self, click_pos, button):
-        self.rect.inflate_ip(2, 2)
+        self.rect.inflate_ip(20, 20)
+        self.surf = pygame.transform.scale(self.surf, (int(math.fabs(self.rect.w)), int(math.fabs(self.rect.h))))
 
     def unselected(self, click_pos, button):
-        self.rect.inflate_ip(-2,-2)
+        self.rect.inflate_ip(-20,-20)
+        self.surf = pygame.transform.scale(self.surf, (int(math.fabs(self.rect.w)), int(math.fabs(self.rect.h))))
 
     def move(self):
         xydelta = np.array((1,2), dtype=np.float32)
@@ -72,6 +76,7 @@ class ShipBase(SpaceEntity):
 
         self.mass = 9.0
         self.forces = {"ctrl": space_util.Force(0, 0)}
+
 
     def update(self, events, inputs, num):
         super(ShipBase, self).update()
