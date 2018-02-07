@@ -27,10 +27,12 @@ class SpaceEntity(pygame.sprite.Sprite):
     def selected(self, click_pos, button):
         self.rect.inflate_ip(20, 20)
         self.surf = pygame.transform.scale(self.surf, (int(math.fabs(self.rect.w)), int(math.fabs(self.rect.h))))
+        print("selected")
 
     def unselected(self, click_pos, button):
         self.rect.inflate_ip(-20,-20)
         self.surf = pygame.transform.scale(self.surf, (int(math.fabs(self.rect.w)), int(math.fabs(self.rect.h))))
+        print("unselected")
 
     def move(self):
         xydelta = np.array((1,2), dtype=np.float32)

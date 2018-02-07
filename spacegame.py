@@ -21,7 +21,9 @@ class GameInit:
         self.MOVETICK = pygame.USEREVENT + 1
         self.CREATE_ENTITY = pygame.USEREVENT + 2
         self.SELECTION = pygame.USEREVENT + 3
+        self.UNSELECTION = pygame.USEREVENT + 4
 
+        self.selected_group = pygame.sprite.Group()
         self.selection_rect = pygame.Rect(0,1,2,3)
         self.dragging = False
 
@@ -39,12 +41,23 @@ class GameInit:
                 self.all_sprites.add(event.entity)
             elif event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP or event.type == pygame.MOUSEMOTION:
                 self.selection(event)
+            elif event.type == self.SELECTION:
+                for spr in event.group:
+                    spr.selected(event.pos, event.button)
+            elif event.type == self.UNSELECTION:
+                print("unselect group", event.group)
+                for spr in event.group:
+                    spr.unselected(event.pos, event.button)
             elif event.type == pygame.QUIT:
                 sys.exit()
 
     def selection(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
+            if event.button >= 0:
+                localref = self.selected_group
+                unselectevent = pygame.event.Event(self.UNSELECTION, {"group": localref.copy(), "pos": event.pos, "button": event.button})
+                self.selected_group.empty()
+                pygame.event.post(unselectevent)
                 self.dragging = True
                 mx, my = event.pos
                 self.selection_rect.x = mx
@@ -52,7 +65,7 @@ class GameInit:
                 self.selection_rect.w = 0
                 self.selection_rect.h = 0
         elif event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1:
+            if event.button >= 0:
                 self.dragging = False
                 group = pygame.sprite.Group()
                 for sprite in self.all_sprites:
@@ -67,9 +80,13 @@ class GameInit:
                         testrect.h = -testrect.h
                     if testrect.colliderect(sprite.rect):
                         group.add(sprite)
-                        sprite.selected(event.pos, 1)
+                        #sprite.selected(event.pos, 1)
 
                 print(group.sprites)
+                select_event = pygame.event.Event(self.SELECTION, {"group": group, "pos": event.pos, "button": event.button})
+                self.selected_group = group.copy()
+                print("-----",self.selected_group)
+                pygame.event.post(select_event)
                 
 
 
