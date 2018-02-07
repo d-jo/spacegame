@@ -69,8 +69,6 @@ class GameInit:
                 self.dragging = False
                 group = pygame.sprite.Group()
                 for sprite in self.all_sprites:
-                    print(sprite.rect)
-                    print(self.selection_rect)
                     testrect = self.selection_rect.copy()
                     if testrect.w < 0:
                         testrect.x = testrect.x + testrect.w
@@ -80,12 +78,10 @@ class GameInit:
                         testrect.h = -testrect.h
                     if testrect.colliderect(sprite.rect):
                         group.add(sprite)
-                        #sprite.selected(event.pos, 1)
 
-                print(group.sprites)
+                print("selection",group.sprites)
                 select_event = pygame.event.Event(self.SELECTION, {"group": group, "pos": event.pos, "button": event.button})
                 self.selected_group = group.copy()
-                print("-----",self.selected_group)
                 pygame.event.post(select_event)
                 
 
@@ -114,7 +110,7 @@ class GameInit:
             for entity in self.all_sprites:
                 entity.update(events, inputs, num)
                 self.screen.blit(entity.surf, entity.rect)
-                self.screen.blit(self.font.render(entity.text, True, entity.color), (entity.rect[0] + 2, entity.rect[1]))
+                self.screen.blit(self.font.render(entity.text, True, entity.color), (entity.rect[0] + entity.rect.w + 2, entity.rect[1]))
 
             if self.dragging:
                 su_rect = self.selection_rect.copy()

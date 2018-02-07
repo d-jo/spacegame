@@ -12,6 +12,7 @@ class ShipType(Enum):
     CARGO = 1
     DESTROYER = 2
     FLEET = 3
+    PLAYER = 4
 
 class SpaceEntity(pygame.sprite.Sprite):
     
@@ -71,7 +72,7 @@ class ShipBase(SpaceEntity):
         self.surf = pygame.Surface((3,3))
         self.rect = self.surf.get_rect()
         self.energy = 10.0
-        self.type = ShipType.CIV
+        self.type = ShipType.PLAYER
         self.text = (self.type.name)
         self.color = (255,255,255)
         self.actions = actions
