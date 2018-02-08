@@ -65,6 +65,7 @@ class RayMissle(SpaceEntity):
         self.text = ("RayMissle " + self.explosive_energy)
 
 
+
 class ShipBase(SpaceEntity):
 
     def __init__(self, actions):
@@ -80,7 +81,10 @@ class ShipBase(SpaceEntity):
         self.mass = 9.0
         self.forces = {"ctrl": space_util.Force(0, 0)}
 
-
+    def unselected(self, pos, button):
+        super(ShipBase, self).unselected(pos, button)
+        self.forces["ctrl"] = space_util.createPointedForce((self.rect.x, self.rect.y), pos, scaling=0.5)
+    
     def update(self, events, inputs, num):
         super(ShipBase, self).update()
         if inputs[K_UP]:
